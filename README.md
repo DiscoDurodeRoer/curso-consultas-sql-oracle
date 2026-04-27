@@ -93,3 +93,15 @@ Sino quieres instalar nada, puedes usar el playground que tiene Oracle:
 
 4. [Funciones de texto](https://youtu.be/LfwqfKY-3q8)
 5. [Funciones númericas](https://youtu.be/HP05cVn6tGQ)
+6. [Funciones de fechas](https://youtu.be/AL38q0hSi74)
+7. [Funciones de conversión](https://youtu.be/oXKOEHYypuw)
+
+## Multitablas
+
+8. [Multitabla](https://youtu.be/MCuY-xl2cUw)
+
+## Agrupación
+
+9. [Funciones agregadas](https://youtu.be/syWx6rj7b5E)
+10. [GROUP BY](https://youtu.be/58SvpY_hCa8)
+11. [HAVING](https://youtu.be/7l8DnmeG5Zc)
