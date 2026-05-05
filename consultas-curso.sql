@@ -214,7 +214,7 @@ WHERE
 
 -- Funciones
 
--- Texto
+-- Funciones de Texto
 
 -- Mostrar los nombres de los fabricantes en mayusculas.
 SELECT
@@ -253,7 +253,7 @@ FROM
     fabricante;
 	
 
--- Numero
+-- Funciones de Numero
 
 -- Muestra los precios de los productos redondeados.
 -- NOTA: para ver que realmente redondea, se debe usar TO_CHAR
@@ -299,7 +299,7 @@ SELECT
 FROM
     producto;
 
--- Fecha
+-- Funciones de Fecha
 
 -- SYSDATE
 SELECT
@@ -359,7 +359,7 @@ SELECT
 FROM
     dual;
 
--- Conversion
+-- Funciones de Conversion
 
 -- Convertir de numero a cadena
 SELECT
@@ -403,3 +403,520 @@ SELECT
     to_char(TO_DATE('2026-01-01', 'YYYY-MM-DD'), 'DD/MM/YYYY') AS fecha_formateada
 FROM
     dual;
+
+-- Funciones de Control
+
+-- NVL
+SELECT
+    nombre,
+    nvl(telefono, 'Sin teléfono') AS telefono
+FROM
+    proveedor;
+
+-- NVL2
+SELECT
+    nombre,
+    coalesce(telefono, 'Si', 'No') as tiene_telefono
+FROM
+    proveedor;
+
+-- COALESCE
+SELECT
+    nombre,
+    coalesce(telefono, NULL, 'No tiene telefono', 'Sin telefono') AS telefono
+FROM
+    proveedor;
+
+-- Multitabla (INNER JOIN)
+
+-- Muestra el nombre del producto y de su fabricante usando INNER JOIN.
+SELECT
+    p.nombre,
+    f.nombre
+FROM
+         producto p
+    JOIN fabricante f ON p.codigo_fabricante = f.codigo;
+
+-- Muestra el nombre del producto y de su fabricante (forma antigua).
+SELECT
+    p.nombre AS nombre_producto,
+    f.nombre AS nombre_fabricante
+FROM
+    producto   p,
+    fabricante f
+WHERE
+    p.codigo_fabricante = f.codigo;
+
+-- Agrupaciones
+
+-- Funciones agregadas
+
+-- Mostrar la media de todos los productos
+SELECT
+    AVG(precio) AS media
+FROM
+    producto;
+	
+-- Mostrar el precio mayor de todos los productos
+SELECT
+    MAX(precio) AS maximo
+FROM
+    producto;
+
+-- Mostrar el precio menor de todos los productos
+SELECT
+    MIN(precio) AS minimo
+FROM
+    producto;
+
+-- Sumar el precio de todos los productos
+SELECT
+    SUM(precio) AS suma
+FROM
+    producto;
+
+-- Contar el numero de productos
+SELECT
+    COUNT(*) AS numero_productos
+FROM
+    producto;
+
+-- Contar el numero de proveedores que tengan un codigo fabricante
+SELECT
+    COUNT(codigo_fabricante) AS numero_proveedor
+FROM
+    proveedor;
+
+-- Contar el numero de fabricantes que hayan fabricado algun producto.
+SELECT
+    count(distinct codigo_fabricante) as numero_fabricantes
+FROM
+    producto;
+
+-- Muestra para cada fabricante (codigo) la suma del precio de sus productos y el numero de productos.
+SELECT
+    codigo_fabricante,
+    SUM(precio) AS suma,
+    COUNT(*)    AS numero_productos
+FROM
+    producto
+GROUP BY
+    codigo_fabricante
+ORDER BY
+    codigo_fabricante;
+
+-- Muestra para cada fabricante (nombre) la suma del precio de sus productos y el numero de productos.
+SELECT
+    f.nombre,
+    SUM(precio) AS suma,
+    COUNT(*)    AS numero_productos
+FROM
+         producto p
+    JOIN fabricante f ON p.codigo_fabricante = f.codigo
+GROUP BY
+    f.nombre
+ORDER BY
+    f.nombre;
+
+-- HAVING
+
+-- Mostrar la media de precio de los productos de cada fabricante que sea superior a 200.
+SELECT
+    codigo_fabricante,
+    AVG(precio) AS media
+FROM
+    producto
+GROUP BY
+    codigo_fabricante
+HAVING
+    AVG(precio) > 200
+ORDER BY
+    codigo_fabricante;
+
+-- Mostrar la media de precio de los productos de cada fabricante que sea superior a 200 y con mas de dos productos.
+SELECT
+    codigo_fabricante,
+    AVG(precio) AS media,
+    COUNT(*)    AS numero
+FROM
+    producto
+GROUP BY
+    codigo_fabricante
+HAVING AVG(precio) > 100
+       AND COUNT(*) > 1
+ORDER BY
+    codigo_fabricante;
+
+
+-- SUBCONSULTAS
+
+-- Muestra el nombre y precio del producto mas caro
+SELECT
+    nombre,
+    precio
+FROM
+    producto
+WHERE
+    precio = (
+        SELECT
+            MAX(precio)
+        FROM
+            producto
+    );
+
+-- Muestra el nombre de los fabricantes que hayan fabricado productos
+SELECT
+    nombre
+FROM
+    fabricante
+WHERE
+    codigo IN (
+        SELECT DISTINCT
+            codigo_fabricante
+        FROM
+            producto
+    );
+
+-- Muestra el nombre y precio del producto mas caro del fabricante ASUS
+SELECT
+    nombre,
+    precio
+FROM
+    producto
+WHERE
+    precio = (
+        SELECT
+            MAX(precio)
+        FROM
+            producto
+        WHERE
+            codigo_fabricante = (
+                SELECT
+                    codigo
+                FROM
+                    fabricante
+                WHERE
+                    nombre = 'Asus'
+            )
+    );
+
+-- Productos mas caros que la media de su fabricante
+SELECT
+    nombre,
+    precio,
+    codigo_fabricante
+FROM
+    producto p
+WHERE
+    precio > (
+        SELECT
+            AVG(precio)
+        FROM
+            producto
+        WHERE
+            codigo_fabricante = p.codigo_fabricante
+    );
+
+-- Muestra el nombre de los fabricantes que hayan fabricado productos usando EXISTS
+SELECT
+    nombre
+FROM
+    fabricante f
+WHERE
+    EXISTS (
+        SELECT
+            codigo
+        FROM
+            producto
+        WHERE
+            codigo_fabricante = f.codigo
+    );
+
+-- Muestra el nombre de los fabricantes que NO hayan fabricado productos usando NOT EXISTS
+SELECT
+    nombre
+FROM
+    fabricante f
+WHERE
+    NOT EXISTS (
+        SELECT
+            codigo
+        FROM
+            producto
+        WHERE
+            codigo_fabricante = f.codigo
+    );
+
+-- Muestra el nombre y precio que superen a todos producto del codigo_fabricante 1 usando ALL
+SELECT
+    nombre,
+    precio
+FROM
+    producto
+WHERE
+    precio > ALL (
+        SELECT
+            precio
+        FROM
+            producto
+        WHERE
+            codigo_fabricante = 1
+    );
+
+
+-- Muestra el nombre y precio que superen a algun producto del codigo_fabricante 1 usando ANY
+SELECT
+    nombre,
+    precio
+FROM
+    producto
+WHERE
+    precio > ANY (
+        SELECT
+            precio
+        FROM
+            producto
+        WHERE
+            codigo_fabricante = 1
+    );
+
+
+-- Muestra el nombre, precio y media de precio de su fabricante
+SELECT
+    nombre,
+    precio,
+    (
+        SELECT
+            AVG(precio)
+        FROM
+            producto
+        WHERE
+            codigo_fabricante = p.codigo_fabricante
+    ) as media_fabricante
+FROM
+    producto p;
+
+-- Muestra la media de precio de los productos cada fabricante que superen en 300.
+SELECT
+    t.codigo_fabricante, avg(t.precio)
+FROM
+    (
+        SELECT
+            codigo_fabricante,
+            precio
+        FROM
+            producto
+        WHERE
+            precio > 300
+    ) t
+group by t.codigo_fabricante;
+
+-- Multitabla avanzado
+
+-- LEFT JOIN
+
+-- Muestra los proveedores y su fabricante, aunque los proveedores no tengan un fabricante.
+SELECT
+    p.nombre                        AS proveedor,
+    nvl(f.nombre, 'Sin fabricante') AS fabricante
+FROM
+    proveedor  p
+    LEFT JOIN fabricante f ON p.codigo_fabricante = f.codigo;
+
+-- Muestra los proveedores que no tienen fabricante
+SELECT
+    p.nombre AS proveedor
+FROM
+    proveedor  p
+    LEFT JOIN fabricante f ON p.codigo_fabricante = f.codigo
+WHERE
+    f.codigo IS NULL;
+
+-- RIGHT JOIN
+
+-- Muestra los proveedores y su fabricante, aunque los fabricantes no tengan un proveedor.
+SELECT
+    nvl(p.nombre, 'Sin proveedor') AS proveedor,
+    f.nombre                       AS fabricante
+FROM
+    proveedor  p
+    RIGHT JOIN fabricante f ON p.codigo_fabricante = f.codigo;
+
+-- Muestra los fabricantes que no tienen proveedor
+SELECT
+    nvl(p.nombre, 'Sin proveedor') AS proveedor,
+    f.nombre                       AS fabricante
+FROM
+    proveedor  p
+    RIGHT JOIN fabricante f ON p.codigo_fabricante = f.codigo
+WHERE
+    p.codigo_fabricante IS NULL;
+
+-- FULL OUTER JOIN
+
+-- Muestra los proveedores y su fabricante, aunque los fabricantes no tengan un proveedor y viceversa.
+SELECT
+    nvl(p.nombre, 'Sin proveedor')  AS nombre_proveedor,
+    nvl(f.nombre, 'Sin fabricante') AS nombre_fabricante
+FROM
+    proveedor  p
+    FULL OUTER JOIN fabricante f ON p.codigo_fabricante = f.codigo;
+
+-- Muestra los fabricantes y proveedores que no tengan relacion entre sí.
+SELECT
+    nvl(p.nombre, 'Sin proveedor')  AS nombre_proveedor,
+    nvl(f.nombre, 'Sin fabricante') AS nombre_fabricante
+FROM
+    proveedor  p
+    FULL OUTER JOIN fabricante f ON p.codigo_fabricante = f.codigo
+WHERE
+    p.codigo IS NULL
+    OR f.codigo IS NULL;
+
+
+-- Conjuntos
+
+-- Muestra los codigos de fabricantes de producto y proveedor sin repetir.
+SELECT
+    codigo_fabricante
+FROM
+    producto
+UNION
+SELECT
+    codigo_fabricante
+FROM
+    proveedor;
+
+-- Muestra los codigos de fabricantes de producto y proveedor repetidos.
+SELECT
+    codigo_fabricante
+FROM
+    producto
+UNION ALL
+SELECT
+    codigo_fabricante
+FROM
+    proveedor;
+
+-- Muestra los codigos de fabricantes que sean comunes entre producto y proveedor.
+SELECT
+    codigo_fabricante
+FROM
+    producto
+INTERSECT
+SELECT
+    codigo_fabricante
+FROM
+    proveedor;
+	
+-- Muestra los codigos de fabricantes de producto que no esten en proveedor
+SELECT
+    codigo_fabricante
+FROM
+    producto
+MINUS
+SELECT
+    codigo_fabricante
+FROM
+    proveedor;
+
+-- VISTAS
+
+-- Almacena la media de los productos de cada fabricante usando una vista.
+CREATE OR REPLACE VIEW media_fabricantes AS
+    SELECT
+        f.nombre,
+        AVG(precio) AS media_fabricante
+    FROM
+             producto p
+        JOIN fabricante f ON p.codigo_fabricante = f.codigo
+    GROUP BY
+        f.nombre;
+		
+-- Muestra a los fabricantes con una media mayor a 200.
+SELECT
+    nombre,
+    media_fabricante
+FROM
+    media_fabricantes
+WHERE
+    media_fabricante > 200;
+
+-- Eliminar vista media_fabricantes
+DROP VIEW media_fabricantes;
+
+-- Almacena la media de los productos de cada fabricante usando un with.
+-- Muestra a los fabricantes con una media mayor a 200.
+WITH media_fabricantes AS (
+    SELECT
+        f.nombre,
+        AVG(precio) AS media_fabricante
+    FROM
+             producto p
+        JOIN fabricante f ON p.codigo_fabricante = f.codigo
+    GROUP BY
+        f.nombre
+)
+SELECT
+    nombre,
+    media_fabricante
+FROM
+    media_fabricantes
+WHERE
+    media_fabricante > 200;
+
+-- Funciones Analíticas en Oracle
+
+-- ROWNUM
+
+-- Top 3 productos mas caros
+SELECT
+    ROWNUM,
+    nombre,
+    precio
+FROM
+    (
+        SELECT
+            nombre,
+            precio
+        FROM
+            producto
+        ORDER BY
+            precio DESC
+    )
+WHERE
+    ROWNUM <= 3;
+	
+-- Top 3 productos mas caros (mas moderno)
+SELECT
+    nombre,
+    precio
+FROM
+    producto
+ORDER BY
+    precio DESC
+FETCH FIRST 3 ROWS ONLY;
+
+-- Muestra los productos empezando por el siguiente al tercero y mostrando los 3 siguientes.
+SELECT
+    nombre,
+    precio
+FROM
+    producto
+ORDER BY
+    precio DESC
+OFFSET 3 ROWS FETCH NEXT 3 ROWS ONLY;
+
+-- Muestra la explicacion de una consulta
+EXPLAIN PLAN
+    FOR
+SELECT
+    nombre,
+    precio
+FROM
+    producto
+WHERE
+    precio > 100
+order by precio;
+    
+SELECT * FROM TABLE(DBMS_XPLAN.display);

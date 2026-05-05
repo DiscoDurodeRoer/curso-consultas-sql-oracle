@@ -83,13 +83,15 @@ Sino quieres instalar nada, puedes usar el playground que tiene Oracle:
 
 [FreeSQL](https://freesql.com/)
 
-## Consultas básicas
+## Teoria
+
+### Consultas básicas
 
 1. [SELECT y FROM](https://youtu.be/WfkOjSOPC4M)
 2. [Ordenar datos con ORDER BY](https://youtu.be/azn5YktyMTo)
 3. [Filtrar datos con WHERE](https://youtu.be/_CmkRNvSicQ)
 
-## Funciones
+### Funciones
 
 4. [Funciones de texto](https://youtu.be/LfwqfKY-3q8)
 5. [Funciones númericas](https://youtu.be/HP05cVn6tGQ)
@@ -97,12 +99,39 @@ Sino quieres instalar nada, puedes usar el playground que tiene Oracle:
 7. [Funciones de conversión](https://youtu.be/oXKOEHYypuw)
 8. [Funciones de control](https://youtu.be/9i2JqoyImrA)
 
-## Multitablas
+### Multitabla (INNER JOIN)
 
-9. [Multitabla](https://youtu.be/MCuY-xl2cUw)
+9. [Multitabla con INNER JOIN](https://youtu.be/MCuY-xl2cUw)
 
-## Agrupación
+### Agrupación
 
 10. [Funciones agregadas](https://youtu.be/syWx6rj7b5E)
 12. [GROUP BY](https://youtu.be/58SvpY_hCa8)
 13. [HAVING](https://youtu.be/7l8DnmeG5Zc)
+
+### Subconsultas
+
+14. [Subconsultas básicas](https://youtu.be/PKGidnSw48Y)
+15. [Subconsultas anidadas](https://youtu.be/YazGKAk2xAM)
+16. [Subconsultas correlacionadas](https://youtu.be/m9OV0rRrmFc)
+17. [Subconsultas con EXISTS y NOT EXISTS](https://youtu.be/pd1u4dho2Xs)
+18. [Subconsultas con ALL y ANY](https://youtu.be/TrRljddj9tk)
+19. [Subconsultas en el SELECT y en el FROM](https://youtu.be/V-W0sWnKBao)
+
+### Joins avanzados
+
+20. [LEFT JOIN | RIGHT JOIN | FULL OUTER JOIN](https://youtu.be/_Hz8V0agrC0)
+
+### Conjuntos
+
+22. [Conjuntos](https://youtu.be/IYOeKFZlDng)
+
+### Vistas
+
+22. [Vistas y With](https://youtu.be/1xcQgsbRxj4)
+
+### Clausulas propias de Oracle
+
+23. [Rownum, offset y Explain](https://youtu.be/AMSEjAN3XEs)
+
+## Ejercicios
